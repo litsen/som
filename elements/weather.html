@@ -1,0 +1,403 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/google-map/google-map.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="my-weather" name="my-weather">
+<template>
+	<style>
+	paper-material.intro {
+		color: gray;
+		float: left;
+		font-family: sans-serif;
+		height: 290px;
+		margin-left: 10%;
+		padding-top: 1%;
+		width: 30%;
+	}
+	paper-input {
+		display: block;
+		float: left;
+		margin-left: 5%;
+		width: 65%;
+	}
+	.children.style-scope.my-weather {
+  		width: 100%;
+  		margin-top: 6%;
+  		margin-left: 2%;
+	}
+	.children.style-scope.my-weather paper-material.intro {
+	  display: block;
+	  height: 120px;
+	  margin: 0 0 3% 8%;
+	  width: 82%;
+	}
+	body{
+		overflow-x: hidden;
+	}
+	li{
+		list-style: none
+	}
+	.icon.style-scope.my-weather {
+		display: block;
+		float: left;
+		height: 40px;
+		width: 72px;
+		margin: 0 0 7%;
+		text-indent: -9999px;
+		background-position: left;
+	}
+	.icon.icon-10d{background: url("http://openweathermap.com/img/w/10d.png") no-repeat transparent;}
+	.icon.icon-04d,.icon.icon-04n{background: url("http://openweathermap.com/img/w/04d.png") no-repeat transparent;}
+	.icon.icon-10n{background: url("http://openweathermap.com/img/w/10n.png") no-repeat transparent;}
+	.icon.icon-01n{background: url("http://openweathermap.com/img/w/01n.png") no-repeat transparent;}
+	.icon.icon-01d{background: url("http://openweathermap.com/img/w/01d.png") no-repeat transparent;}
+	.icon.icon-02d{background: url("http://openweathermap.com/img/w/02d.png") no-repeat transparent;}
+	.icon.icon-03d,.icon.icon-03n{background: url("http://openweathermap.org/img/w/03d.png") no-repeat transparent;}
+	table {
+		margin: 10% auto 0;
+		width: 94%;
+	}
+	google-map {
+		float: right;
+		height: 300px;
+		width: 50%;
+		margin-right: 7%;
+	}
+	#butName {
+		float: right;
+		margin-right: 5%;
+		margin-top: 3%;
+		border-radius: 28px;
+	}
+	.header.style-scope.my-weather {
+		float: left;
+		margin-bottom: 8%;
+		width: 100%;
+	}
+	.headimg {
+		height: 100px;
+		width: 100px;
+	}
+	.pardiv {
+		display: block;
+		float: left;
+		margin-top: 4%;
+		width: 100%;
+	}
+	.parent.style-scope.my-weather {
+		width: 50%;
+		display: block;
+		float: right;
+	}
+	.parimg {
+		float: left;
+		text-align: center;
+		text-transform: capitalize;
+		width: 50%;
+	}
+	.des.style-scope.my-weather {
+		float: left;
+		width: 100%;
+	}
+	.parsub.style-scope.my-weather{
+		width: 100%;
+		float: left;
+		position: relative;
+	}
+	.parsub.style-scope.my-weather > div {
+		float: left;
+		font-size: 52px;
+		margin-top: 9%;
+		width: 100%;
+	}
+	.parsub.style-scope.my-weather > button {
+		position: absolute;
+		right: 7%;
+		top: 0;
+	}
+	.mainheader{
+		float: left;
+		width: 100%; 
+		margin-bottom: 3%
+	}
+	.child-div li.style-scope.my-weather {
+	  float: left;
+	  font-size: 13px;
+	  height: 70%;
+	  margin: 0;
+	  position: relative;
+	  text-align: center;
+	  text-transform: capitalize;
+	  width: 12%;
+	  margin-right: 2%;
+	}
+	.child-div .ctime {
+	  line-height: 22px;
+	  text-align: center;
+	}
+	.children .chid-par {
+		border: 1px solid gray;
+		border-right: 0 none;
+		border-left:0 none;
+		clear: both;
+		display: block;
+		height: 100px;
+		margin: 0 auto 2%;
+		width: 60%;
+	}
+	.cweather .icon {
+	  background-position: center center !important;
+	  background-size: 85% auto !important;
+	  width: 84% !important;
+	}
+	.chid-par .chead {
+	  display: block;
+	  font-family: sans-serif;
+	  font-size: 16px;
+	  width: 100%;
+	}
+	.child-div li > div {
+	  bottom: 0;
+	  position: absolute;
+	  text-align: center;
+	  width: 100%;
+	}
+	.seeNext.style-scope.my-weather {
+	  border: 2px solid;
+	  border-radius: 26px;
+	  float: right;
+	  margin-right: 17%;
+	  padding-left: 2%;
+	  cursor: pointer;
+	}
+	.seeNext.style-scope.my-weather.prev {
+		float: left;
+		margin-left: 21%;
+		padding-left: 4px;
+		padding-right: 16px;
+	}
+	</style>
+
+	<iron-ajax
+	    auto
+	    id="weather"
+	    url="http://api.openweathermap.org/data/2.5/forecast"
+	    params='{{param}}'
+	    handle-as="json"
+	    on-response="handleResponse" 
+	    last-response="{{ajaxResponse}}">
+	</iron-ajax>
+
+	<h2>Weather Forecast</h2>
+	<div class="mainheader">
+
+		<paper-material elevation="1" class="intro" animated="true">
+			<div class="header">
+				<paper-input label="State name" id="stateName" auto-validate="true" invalid$="{{inval}}" error-message="Invalid input!"></paper-input>
+			  	<paper-button raised on-click="newAjax" id="butName">Submit</paper-button>
+			</div>
+			<div class="pardiv">
+				<div class="parent">
+					<span class="con">{{ajaxResponse.city.name}}</span>,
+			  		<span class="city">{{ajaxResponse.city.country}}</span>
+			  		<div class="parsub">
+			  			<div hidden$="{{hide}}">{{calTemp(ajaxResponse.list.0.main.temp)}}</div>
+			  			<div hidden$="{{show}}">{{ajaxResponse.list.0.main.temp}}</div>
+			  			<button on-click="tempButton" hidden$="{{hide}}">°C</button>
+			  			<button on-click="tempButton"  hidden$="{{show}}">°F</button>
+			  		</div>
+				</div>
+				<div class="parimg">
+					<span class="des">{{ajaxResponse.list.0.weather.0.description}}</span>
+		  			<img class="headimg" src$="{{imgUrl(ajaxResponse.list.0.weather.0.icon)}}">
+		  		</div>
+	  		</div>
+		</paper-material>
+
+		<google-map latitude$="{{ajaxResponse.city.coord.lat}}" longitude$="{{ajaxResponse.city.coord.lon}}">
+		  <template is="dom-repeat" items="[[ajaxResponse.list.0.weather]]">
+			  <google-map-marker latitude$="{{ajaxResponse.city.coord.lat}}" longitude$="{{ajaxResponse.city.coord.lon}}" draggable="true" title$="{{ajaxResponse.city.name}}" icon$="{{imgUrl(item.icon)}}">
+			  	<span>
+			  		MaxTemp - <span>{{calTemp(ajaxResponse.list.0.main.temp_max)}}</span>,
+			  		MinTemp - <span>{{calTemp(ajaxResponse.list.0.main.temp_min)}}</span>
+			  	</span>
+			  </google-map-marker>
+		  </template>
+		</google-map>
+	</div>
+	<div class="children">
+		<template is="dom-repeat" items="[[ajaxResponse.list]]"  filter="isToday">
+			<div class="chid-par">
+			<ul class="child-div">
+				<li class="ctime">
+					<h3>{{item.dt_txt}}</h3>
+				</li>
+				<template is="dom-repeat" items="[[item.weather]]">
+				<li class="cweather">
+					<span class$="{{getIconClass(item.icon)}}">{{item.icon}}</span>
+					<span>{{item.description}}</span>
+				</li>
+				</template>
+				<li>
+					<span class="chead">Temperature</span>
+					<div><span>{{calTemp(item.main.temp)}}</span><span>°C</span></div>
+				</li>
+				<li>
+					<span class="chead">Minimum Temperature</span>
+					<div><span>{{calTemp(item.main.temp_min)}}</span><span>°C</span></div>
+				</li>
+				<li>
+					<span class="chead">Maximum Temperature</span>
+					<div><span>{{calTemp(item.main.temp_max)}}</span><span>°C</span></div>
+				</li>
+				<li>
+					<span class="chead">Pressure</span>
+					<div>{{item.main.pressure}}</div>
+				</li>
+				<li>
+					<span class="chead">Wind</span>
+					<div>{{item.wind.speed}}</div>
+				</li>
+			</ul>		
+			</div>
+		</template>
+	</div>
+	<div>
+		<div hidden$="{{nhide}}" class="seeNext" on-click="isTomorrow">
+			<span>See Next 24HR</span>	
+			<paper-icon-button icon="arrow-forward"></paper-icon-button>
+		</div>
+		<div hidden$="{{phide}}" on-click="isYesterday" class="seeNext prev">	
+			<paper-icon-button icon="arrow-back"></paper-icon-button>
+			<span>Go Back</span>
+		</div>
+	</div>
+</template>	
+<script>
+	Polymer({
+      is: 'my-weather',
+      ready:function(){
+      	this.date=this.todayIs();
+      	this.phide=true;
+      },
+      properties:{
+      	param:{
+      		type:Object,
+      		value:function(){
+      			return {
+      				"q":"Hyderabad",
+	      			"mode":"json"
+      			}
+      		},
+      		notify:true
+      	},
+      	date:{
+      		type:String,
+      		notify: true
+      	},
+      	nhide:{
+      		value:false
+      	},
+      	flag:{
+      		value:1,
+      	},
+      	timestp:{
+      		value:0,
+      	},
+      	show:{
+      		value:true
+      	},
+      	hide:{
+      		value:false
+      	},
+      	inval:{
+      		value:false
+      	}
+      },	
+      tempButton:function(){
+      	this.show=!this.show;
+      	this.hide=!this.hide; 
+      },
+      isToday: function(item) {
+		var x=item.dt_txt.split(" ");
+			y=this.date;
+			return	x[0] == y;
+	  },
+	  isYesterday:function(){
+	  	var today = new Date(),
+	        dd = today.getDate(),
+	    	mm = today.getMonth()+1,
+	    	yyyy = today.getFullYear();
+		    if(dd<10){dd='0'+dd} 
+		    if(mm<10){mm='0'+mm} 
+	    	today = yyyy+'-'+mm+'-'+dd;
+			this.date=today;
+			document.getElementById("weather").generateRequest();
+			this.nhide=false;
+			this.phide=true;
+			this.flag=1;
+	  },
+	  todayIs:function(){
+	  	var today = new Date(),
+	        dd = today.getDate(),
+	    	mm = today.getMonth()+1,
+	    	yyyy = today.getFullYear();
+		    if(dd<10){dd='0'+dd} 
+		    if(mm<10){mm='0'+mm} 
+	    	today = yyyy+'-'+mm+'-'+dd;
+	    	return today;	
+	  },
+	  isTomorrow:function(){
+	  	console.log(this.flag);
+	  	if(this.flag == 6){this.nhide=true;return false;}
+  		var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * this.flag),
+			dd = currentDate.getDate(),
+			mm = currentDate.getMonth() + 1,
+			yy = currentDate.getFullYear();
+			this.timestp=currentDate;
+			if(dd<10){dd='0'+dd} 
+		    if(mm<10){mm='0'+mm} 
+		    tomorrow = yy+"-"+mm+"-"+dd;
+			this.date=tomorrow;
+			document.getElementById("weather").generateRequest();
+			this.phide=false;
+			this.flag=this.flag+1;
+	  },
+      calTemp:function(x){
+      	return (x-273).toFixed(2);
+      },
+      imgUrl:function(x){
+      	return "http://openweathermap.com/img/w/"+x+".png";
+      },
+      newAjax:function(){
+      	var item = this.$.stateName.value;
+      	if(item){
+      		this.param={"q":item,"mode":"json"};
+      		document.getElementById("weather").generateRequest();
+      	}else{
+      		this.inval=true;
+      	} 	
+      },
+	  timeStmpToTime:function(x){
+		var d = new Date(x * 1000),	
+			yyyy = d.getFullYear(),
+			mm = ('0' + (d.getMonth() + 1)).slice(-2),
+			dd = ('0' + d.getDate()).slice(-2);
+			time = yyyy  + '-' + mm + '-' + dd;
+			return time;			
+      },
+      handleResponse:function(data){
+      	console.log(this.ajaxResponse);
+      },
+      getIconClass:function(iconName){
+      	return 'icon icon-'+iconName;
+      }
+    });
+</script>
+</dom-module>	
