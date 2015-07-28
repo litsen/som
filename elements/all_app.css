@@ -1,0 +1,148 @@
+body{font-family: sans-serif;}
+		#p-drawer {
+		  border-right: 1px solid lightgray;
+		  box-shadow: 0 1px 2px 2px lightgray;
+		}
+		paper-scroll-header-panel {
+		  height: 100%;
+		}
+		.d-menu #topBar {
+		  background-color: white;
+		  color: background;
+		  font-size: 27px;
+		  font-weight: bold;
+		}
+		.d-s-menu a {
+		  border-bottom: 1px solid lightgray;
+		  display: block;
+		  line-height: 36px;
+		  margin-bottom: 6px;
+		  padding-left: 6%;
+		  text-decoration: none;
+		  width: 94%;
+		  color: black;
+		}
+		paper-material.intro {
+		  color: gray;
+		  font-family: sans-serif;
+		  margin: 6% auto 0;
+		  padding-top: 1%;
+		  text-align: center;
+		  width: 42%;
+		}
+		paper-input {
+			display: block;
+			margin: 0 3%;
+			width: 94%;
+		}
+		paper-button#butName {
+		  margin: 6% 0 6% 0;
+		  width: 26%;
+		  background: #3F51B5;
+		  color: white;
+		}
+		.icon.icon-10d{background: url("http://openweathermap.com/img/w/10d.png") no-repeat transparent;}
+		.icon.icon-04d,.icon.icon-04n{background: url("http://openweathermap.com/img/w/04d.png") no-repeat transparent;}
+		.icon.icon-10n{background: url("http://openweathermap.com/img/w/10n.png") no-repeat transparent;}
+		.icon.icon-01n{background: url("http://openweathermap.com/img/w/01n.png") no-repeat transparent;}
+		.icon.icon-01d{background: url("http://openweathermap.com/img/w/01d.png") no-repeat transparent;}
+		.icon.icon-02d{background: url("http://openweathermap.com/img/w/02d.png") no-repeat transparent;}
+		.icon.icon-03d,.icon.icon-03n{background: url("http://openweathermap.org/img/w/03d.png") no-repeat transparent;}
+		.parimg .headimg {
+		  height: 100%;
+		  width: 100%;
+		}
+		.result.paper-material-0 {
+		  margin: 4% auto;
+		  width: 50%;
+		  height: 150px;
+		}
+		.parent.style-scope.weather-app {
+		  float: right;
+		  height: 100%;
+		  width: 72%;
+		}
+		.parimg.style-scope.weather-app {
+		  float: left;
+		  height: 100%;
+		  width: 24%;
+		}
+		.parent .des {
+		  display: block;
+		  font-size: 25px;
+		  margin-top: 5%;
+		  width: 100%;
+		  margin-bottom: 2%;
+		}
+		.per_temp{float: left;margin-right: 2%;}
+		.parsub.style-scope.weather-app {
+		  margin-top: 1%;
+		}
+		ul.child-div {
+		  border: 1px solid #3f51b5;
+		  float: left;
+		  list-style: outside none none;
+		  width: 92%;
+		  border-left: 0;
+		  border-right: 0;
+		  padding: 2% 2%;
+		}
+		ul.child-div li {
+		  float: left;
+		  margin-right: 2%;
+		}
+		.cweather .icon {
+		  background-size: 72% auto;
+		  color: transparent;
+		  display: block;
+		  height: 10%;
+		  width: 100%;
+		  background-position: center;
+		}
+		.citem.style-scope.weather-app {
+		  height: 14%;
+		  text-align: center;
+		  width: 12%;
+		}
+		ul.child-div li.ctime {
+		  font-size: 12px;
+		  margin-right: 5%;
+		  text-align: center;
+		  width: 10%;
+		}
+		.chead.style-scope.weather-app {
+			display: block;
+			font-size: 14px;
+			font-weight: bold;
+			height: 52px;
+			text-align: center;
+		}
+		.cweather.style-scope.weather-app {
+		  width: 9%;
+		}
+		.cweather .chead.style-scope.weather-app{height: 40px;}
+		.cnavigate {
+		  clear: both;
+		  float: left;
+		  width: 100%;
+		}
+		.seeNext.style-scope.weather-app {
+		  border: 2px solid;
+		  border-radius: 26px;
+		  float: right;
+		  margin-right: 17%;
+		  padding-left: 2%;
+		  cursor: pointer;
+		}
+		.seeNext.style-scope.weather-app {
+		  float: right;
+		  padding-left: 24px;
+		  padding-right: 16px;
+		}
+		.seeNext.prev.style-scope.weather-app {
+		  float: left;
+		}
+		.content.paper-menu > .iron-selected {
+		  color: #3f51b5;
+		  font-weight: bold;
+		}

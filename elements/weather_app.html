@@ -1,0 +1,276 @@
+<link rel="import" href="imports.html">
+<dom-module id="weather-app">
+<template>
+	<link rel="stylesheet" type="text/css" href="all_app.css">
+	<style>
+		weather-app{
+			--my--color:red;
+		}
+		.paper-menu-0 .content.paper-menu > .iron-selected{
+			color: var(--my--color);
+		}
+		.d-s-menu a{margin-bottom: 0;}
+	</style>	
+	<iron-ajax
+	    auto
+	    id="weather"
+	    url="http://api.openweathermap.org/data/2.5/forecast"
+	    params='{{param}}'
+	    handle-as="json"
+	    on-response="handleResponse" 
+	    last-response="{{ajaxResponse}}">
+	</iron-ajax>	
+	<paper-drawer-panel id="paperDrawerPanel">
+		<paper-scroll-header-panel drawer>
+			<paper-toolbar class="d-menu"><span>MENU</span></paper-toolbar>
+		  	<paper-menu selected="0" class="d-s-menu">
+			  	<a data-route="home" href="/">
+		            <iron-icon icon="home"></iron-icon>
+		            <span>Home</span>
+          		</a>
+          		<a data-route="nday" href="/future">
+		            <iron-icon icon="cloud"></iron-icon>
+		            <span>Future</span>
+		        </a>
+			  	<a data-route="map" href="/map">
+		            <iron-icon icon="room"></iron-icon>
+		            <span>MAP</span>
+		        </a>
+			</paper-menu>
+		</paper-scroll-header-panel>
+		<paper-scroll-header-panel main>
+			<paper-toolbar>
+			 	<paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+				<div class="p-left">
+		            <span>Polymer Starter Kit</span>
+		        </div>
+		        <div class="p-right">
+			        <paper-icon-button icon="refresh" on-click="backHome"></paper-icon-button>
+	        	</div>
+	        </paper-toolbar>
+	        <div class="content">
+	        	<iron-pages attr-for-selected="data-route" selected="{{route}}">
+				  	<section data-route="home">
+			            <paper-material elevation="1" class="intro" animated="true">
+							<div class="header">
+								<paper-input label="State name" id="stateName" auto-validate="true" invalid$="{{inval}}" error-message="Invalid input!"></paper-input>
+							  	<paper-button raised on-click="newAjax" id="butName">Submit</paper-button>
+							</div>
+						</paper-material>
+						<paper-material class="result">
+							<div class="pardiv">
+								<div class="parimg">
+						  			<img class="headimg" src$="{{imgUrl(ajaxResponse.list.0.weather.0.icon)}}">
+						  		</div>
+								<div class="parent">
+									<span class="des">{{ajaxResponse.list.0.weather.0.description}}</span>
+									<span class="con">{{ajaxResponse.city.name}}</span>,
+							  		<span class="city">{{ajaxResponse.city.country}}</span>
+							  		<div class="parsub">
+							  			<div class="per_temp" hidden$="{{hide}}">{{calTemp(ajaxResponse.list.0.main.temp)}}</div>
+							  			<div class="per_temp" hidden$="{{show}}">{{ajaxResponse.list.0.main.temp}}</div>
+							  			<button on-click="tempButton" hidden$="{{hide}}">°C</button>
+							  			<button on-click="tempButton"  hidden$="{{show}}">°F</button>
+							  		</div>
+							  		<div><span>Wind Speed - </span><span>{{ajaxResponse.list.0.wind.speed}}</span></div>
+								</div>	
+					  		</div>
+				  		</paper-material>
+		            </section>
+		            <section data-route="future">
+			            <div class="children">
+							<template is="dom-repeat" items="[[ajaxResponse.list]]"  filter="isToday">
+								<div class="chid-par">
+								<ul class="child-div">
+									<li class="ctime">
+										<h3>{{dateGen(item.dt_txt)}}</h3>
+										<h4>{{timeGen(item.dt_txt)}}</h4>
+									</li>
+									<template is="dom-repeat" items="[[item.weather]]">
+									<li class="cweather">
+										<span class="chead">{{item.description}}</span>
+										<span class$="{{getIconClass(item.icon)}}">{{item.icon}}</span>
+									</li>
+									</template>
+									<li class="citem">
+										<span class="chead">Temperature</span>
+										<div><span>{{calTemp(item.main.temp)}}</span><span>°C</span></div>
+									</li>
+									<li class="citem">
+										<span class="chead">Minimum Temperature</span>
+										<div><span>{{calTemp(item.main.temp_min)}}</span><span>°C</span></div>
+									</li>
+									<li class="citem">
+										<span class="chead">Maximum Temperature</span>
+										<div><span>{{calTemp(item.main.temp_max)}}</span><span>°C</span></div>
+									</li>
+									<li class="citem">
+										<span class="chead">Pressure</span>
+										<div>{{item.main.pressure}}</div>
+									</li>
+									<li class="citem">
+										<span class="chead">Wind</span>
+										<div>{{item.wind.speed}}</div>
+									</li>
+								</ul>		
+								</div>
+							</template>
+						</div>
+						<div class="cnavigate">
+							<div hidden$="{{nhide}}" class="seeNext" on-click="isTomorrow">
+								<span>See Next 24HR</span>	
+								<paper-icon-button icon="arrow-forward"></paper-icon-button>
+							</div>
+							<div hidden$="{{phide}}" on-click="isYesterday" class="seeNext prev">	
+								<paper-icon-button icon="arrow-back"></paper-icon-button>
+								<span>Go Back</span>
+							</div>
+						</div>
+		            </section>	
+		            <section data-route="map">
+		            	<google-map latitude$="{{ajaxResponse.city.coord.lat}}" longitude$="{{ajaxResponse.city.coord.lon}}">
+						  <template is="dom-repeat" items="[[ajaxResponse.list.0.weather]]">
+							  <google-map-marker latitude$="{{ajaxResponse.city.coord.lat}}" longitude$="{{ajaxResponse.city.coord.lon}}" draggable="true" title$="{{ajaxResponse.city.name}}" icon$="{{imgUrl(item.icon)}}">
+							  	<span>
+							  		MaxTemp - <span>{{calTemp(ajaxResponse.list.0.main.temp_max)}}</span>,
+							  		MinTemp - <span>{{calTemp(ajaxResponse.list.0.main.temp_min)}}</span>
+							  	</span>
+							  </google-map-marker>
+						  </template>
+						</google-map>
+		            </section>	
+				</iron-pages>
+	        </div> 
+		</paper-scroll-header-panel>
+	</paper-drawer-panel>	
+</template>
+<script>
+	Polymer({
+		is:"weather-app",
+		ready:function(){
+	      	this.date=this.todayIs();
+    	  	this.phide=true;
+		},
+		backHome:function(){
+			this.$.stateName.value="";
+			this.param={"q":"Hyderabad","mode":"json"}
+			document.getElementById("weather").generateRequest();
+			this.route="home";
+		},
+		 isYesterday:function(){
+		  	var today = new Date(),
+		        dd = today.getDate(),
+		    	mm = today.getMonth()+1,
+		    	yyyy = today.getFullYear();
+			    if(dd<10){dd='0'+dd} 
+			    if(mm<10){mm='0'+mm} 
+		    	today = yyyy+'-'+mm+'-'+dd;
+				this.date=today;
+				document.getElementById("weather").generateRequest();
+				this.nhide=false;
+				this.phide=true;
+				this.flag=1;
+		  },
+		  todayIs:function(){
+		  	var today = new Date(),
+		        dd = today.getDate(),
+		    	mm = today.getMonth()+1,
+		    	yyyy = today.getFullYear();
+			    if(dd<10){dd='0'+dd} 
+			    if(mm<10){mm='0'+mm} 
+		    	today = yyyy+'-'+mm+'-'+dd;
+		    	return today;	
+		  },
+		  isTomorrow:function(){
+		  	if(this.flag == 6){this.nhide=true;return false;}
+	  		var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * this.flag),
+				dd = currentDate.getDate(),
+				mm = currentDate.getMonth() + 1,
+				yy = currentDate.getFullYear();
+				this.timestp=currentDate;
+				if(dd<10){dd='0'+dd} 
+			    if(mm<10){mm='0'+mm} 
+			    tomorrow = yy+"-"+mm+"-"+dd;
+				this.date=tomorrow;
+				document.getElementById("weather").generateRequest();
+				this.phide=false;
+				this.flag=this.flag+1;
+		  },
+		handleResponse:function(){
+		},
+		imgUrl:function(x){
+      		return "http://openweathermap.com/img/w/"+x+".png";
+      	},
+      	tempButton:function(){
+	      	this.show=!this.show;
+	      	this.hide=!this.hide; 
+      	},
+      	newAjax:function(){
+	      	var item = this.$.stateName.value;
+	      	if(item){
+	      		this.param={"q":item,"mode":"json"};
+	      		document.getElementById("weather").generateRequest();
+	      	}else{
+	      		this.inval=true;
+	      	} 	
+	     },
+      	calTemp:function(x){
+	      	return (x-273).toFixed(2);
+	    },
+	    dateGen:function(item){
+	    	var x=item.split(" ");
+	    	return x[0];
+	    },
+	    timeGen:function(item){
+	    	var x=item.split(" ");
+	    	return x[1];
+	    },
+	    isToday: function(item) {
+				var x=item.dt_txt.split(" ");
+				y=this.date;
+				return	x[0] == y;
+		},
+		getIconClass:function(iconName){
+	      	return 'icon icon-'+iconName;
+	    },
+		properties:{
+			show:{
+	      		value:false
+	      	},
+	      	hide:{
+	      		value:true
+	      	},
+	      	flag:{
+	      		value:1,
+	      	},
+	      	date:{
+	      		type:String,
+	      		notify: true
+	      	},
+	      	nhide:{
+	      		value:false
+	      	},
+	      	timestp:{
+	      		value:0,
+	      	},
+	      	inval:{
+	      		value:false
+	      	},
+	      	param:{
+	      		type:Object,
+	      		value:function(){
+	      			return {
+	      				"q":"Hyderabad",
+		      			"mode":"json"
+	      			}
+	      		},
+	      		notify:true
+      		}
+      	}	
+	});
+</script>
+</dom-module>
+
+
+
+
