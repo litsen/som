@@ -1,0 +1,496 @@
+<dom-module id="weather-app">
+	<style is="weather-app">
+		paper-toolbar{
+			--default-primary-color:#03A9F4;
+			--text-primary-color:white;
+		}
+		iron-icon{
+			cursor: pointer;
+		}
+		paper-scroll-header-panel {
+		  height: 100%;
+		}
+		paper-input{
+			width: 100%;
+			--paper-input-container-focus-color:white;
+			--paper-input-container-color:white;
+		}
+
+		paper-icon-button.submit{--paper-icon-button-ink-color: white;color:white;position: absolute;top: 20px;right: -20px; }
+		.header-part {
+		  margin:3% auto;
+		  width: 30%;
+		  position: relative;
+		}
+		.body-part.weather-app.weather-app {
+		  background: rgba(0, 0, 0, 0) url("http://www.allweathercontractors.com/wp-content/uploads/background-allweather.png") no-repeat scroll 0 0;
+		  font-family: "Trebuchet MS",Helvetica,sans-serif;
+		  margin:2% auto 0;
+		  width: 60%;
+		  color: white;
+		  padding: 2%;
+		}
+		.now.style-scope.weather-app {
+ 			display: inline-block;
+  			width: 100%;
+  			display: 
+		}
+		.now.weather-app.weather-app p{margin: 0;}
+		.nleft.weather-app {
+		  width: 25%;
+		  padding-left:3%;
+		}
+		.nday.weather-app {
+		  text-align: left;
+		  font-size: 32px;
+		  margin-bottom: 4px !important;
+		}
+		.ndate.weather-app {
+		  font-size: 13px;
+		}
+		.nlocation.weather-app {
+		  font-size: 16px;
+		}
+		.ntemp.weather-app {
+		  font-size: 32px;
+		  margin-top: 2% !important;
+		}
+		.icon.icon-10d{background: url("http://openweathermap.com/img/w/10d.png") no-repeat transparent;}
+		.icon.icon-04d,.icon.icon-04n{background: url("http://openweathermap.com/img/w/04d.png") no-repeat transparent;}
+		.icon.icon-10n{background: url("http://openweathermap.com/img/w/10n.png") no-repeat transparent;}
+		.icon.icon-01n{background: url("http://openweathermap.com/img/w/01n.png") no-repeat transparent;}
+		.icon.icon-01d{background: url("http://openweathermap.com/img/w/01d.png") no-repeat transparent;}
+		.icon.icon-02d{background: url("http://openweathermap.com/img/w/02d.png") no-repeat transparent;}
+		.icon.icon-02n{background: url("http://openweathermap.com/img/w/02n.png") no-repeat transparent;}
+		.icon.icon-03d,.icon.icon-03n{background: url("http://openweathermap.org/img/w/03d.png") no-repeat transparent;}
+		.nmiddle .icon{height: 70px;width: 50%;display: block;margin: 0 auto;background-size:cover;margin-bottom: 3%;}
+		.nmiddle.weather-app{width: 22%;text-align: center;margin: 2% 4% 0;}
+		.nright.weather-app{width: 22%;text-align: left;margin-left: 12%;}
+		.now{
+			display: -webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: flex !important;
+		}
+		.now > div{float:left;flex:1 1 auto;}
+		.footer-part{ display: -webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: flex;}
+		.footer-part ul li{display: none;padding:13% 0;}
+		.footer-part ul li span	{display: block;width: 100%;text-align: center;}
+		.footer-part ul li span.icon{
+			background-position: center center;
+			cursor: pointer;
+			height: 55px;
+			margin-top: 21%;
+		}
+		.footer-part ul li span.small{font-size: 10px;text-align: left;float: left;width: 32%;padding-left: 12%;}
+		.footer-part ul li span.small.r{text-align: right;float: right;padding-left: 0;padding-right: 12%;}
+		.footer-part ul li span.title{margin-bottom: 8%}
+		.footer-part ul li:first-child{display: block;}
+		.footer-part.style-scope.weather-app.weather-app ul.weather-app {
+		  background-color: black;
+		  border: 1px solid white;
+		  border-radius: 10px;
+		  display: inline-block;
+		  flex: 1 1 auto;
+		  margin: 0 2%;
+		  opacity: 0.5;
+		  padding: 0;
+		}
+		.footer-part.style-scope.weather-app {margin-top: 5%;font-size: 13px;}
+		.selected{
+		  background-color: white !important;
+		  border: 1px solid black;
+		  border-radius: 20px;
+		  color: black;
+		  opacity: 0.8 !important;
+		}
+		.displayPanel{
+			background-color: #03A9F4;
+			color: white;
+			font-family: "Trebuchet MS",Helvetica,sans-serif;
+			list-style: outside none none;
+			margin: 4% auto 0;
+			width: 100%;
+		}
+		.displayPanel li { 
+			display: block;
+			background-color: #03a9f4;
+		    float: left;
+		    display: -webkit-box;
+		    display: -moz-box;
+		    display: -ms-flexbox;
+		    display: -webkit-flex;
+		    display: flex;
+		  	border: 1px solid;
+  			margin-bottom: 1%;
+  			padding: 1%;
+  			width: 31%;
+		}
+		.displayPanel li span.title{font-size: 20px;}
+		.displayPanel li .dis_par span{font-size: 12px;width: 100%;}
+		.displayPanel.weather-app li.weather-app span.icon.weather-app {
+		 	background-position: center bottom;
+			background-size: auto auto;
+			display: block;
+			height: 45px;
+		}
+		.nright p {
+		  display: block;
+		  margin-bottom: 3% !important;
+		}
+		.dis_sub{
+			flex: 1 1 auto;
+		    float: left;
+		    padding: 2%;
+		    text-align: center;
+		}
+		.dis_par{
+		   	flex: 1 1 auto;
+		    float: right;
+		    padding: 0 5% 2% 0;
+		    text-align: center;
+		}
+		.dis_par span {
+		  display: block;
+		  width: 100%;
+		}
+		.deep span {
+		  float: right;
+		  width: auto !important;
+		}
+		.deep label {
+		  float: left;
+		  text-align: left;
+		  width: 58%;
+		}
+		.dis_par .title{font-size: 20px !important;}
+		body,html{height: 100%;}
+		.google-map {
+			clear: both;
+		  	width: 100%;
+		  	width: 50%;
+		  	margin: 2% auto;
+		}
+		google-chart {
+		  height: 300px !important;
+		  width: 500px !important;
+		}
+	</style>
+	<template>
+		<iron-ajax
+	    auto
+	    id="weather"
+	    url="http://api.openweathermap.org/data/2.5/forecast"
+	    params='{{param}}'
+	    handle-as="json"
+	    on-response="handleResponse" 
+	    last-response="{{ajaxResponse}}">
+		</iron-ajax>
+		<paper-scroll-header-panel class="flex">
+		    <paper-toolbar>
+				<paper-icon-button icon="menu"></paper-icon-button>
+			   	<div class="title bottom indent">Weather</div>
+			   	<div class="header-part">
+			  		<paper-input error-message="Invalid input!" label="Area Name" autoValidate="true" invalid$="{{sub_valid}}" prevent-invalid-input allowed-pattern="[a-zA-Z]">
+			  		</paper-input>
+			  		<paper-icon-button icon="arrow-forward" class="submit" on-click="newAjax"></paper-icon-button>
+		  		</div>
+			</paper-toolbar>
+		  	<div class="content">
+		  		
+		  		<div class="body-part">
+			  		<div class$="{{knightnDay(ajaxResponse.list.0.dt)}}">
+				  		<div class="nleft">
+					  		<p class="nday">{{getDay(ajaxResponse.list.0.dt)}}</p>
+					  		<p class="ndate">{{getDate(ajaxResponse.list.0.dt)}}</p>
+					  		<p class="nlocation"><span>{{ajaxResponse.city.name}}</span>,<span>{{ajaxResponse.city.country}}</span></p>
+					  		<p class="ntemp"><span>{{getCelcious(ajaxResponse.list.0.main.temp)}}</span><span>°C</span></p>
+			  			</div>
+			  			<div class="nmiddle">
+							<template is="dom-repeat" items="[[ajaxResponse.list.0.weather]]">
+								<span class$="{{getIcon(item.icon)}}">
+					  				</span>
+				  				<span class="middes">{{item.description}}</span>
+							</template>
+			  			</div>
+			  			<div class="nright">
+			  				<p><label>Pressure : </label>{{ajaxResponse.list.0.main.pressure}}</p>
+			  				<p><label>Humidity : </label>{{ajaxResponse.list.0.main.humidity}}</p>
+			  				<p><label>Sea Level : </label>{{ajaxResponse.list.0.main.sea_level}}</p>
+			  				<p><label>Ground Level : </label>{{ajaxResponse.list.0.main.grnd_level}}</p>
+			  				<p><label>Wind Speed : </label>{{ajaxResponse.list.0.wind.speed}}</p>
+			  			</div>
+			  		</div>
+			  		<span style="clear:both"></span>
+				  		<div class="footer-part">
+				  			<ul data-name="today">
+				  			<template is="dom-repeat" items="{{ajaxResponse.list}}" filter="getToday">
+				  				<li>		 						
+									<span class="title">{{getDay(item.dt)}}</span>
+									<span class="small">{{item.main.temp_min}}</span>	
+									<span class="small r">{{item.main.temp_max}}</span>
+									<template is="dom-repeat" items="{{item.weather}}">
+										<span class$="{{getIcon(item.icon)}}" on-click="showMe"></span>
+										<span>{{item.description}}</span>
+									</template>
+				  				</li>		
+				  			</template>
+				  			</ul>
+				  			<ul data-name="done">
+				  			<template is="dom-repeat" items="{{ajaxResponse.list}}" filter="getOneToday" >
+				  				<li>		 						
+									<span class="title">{{getDay(item.dt)}}</span>
+									<span class="small">{{getCelcious(item.main.temp_min)}}</span>	
+									<span class="small r">{{getCelcious(item.main.temp_max)}}</span>
+									<template is="dom-repeat" items="{{item.weather}}">
+										<span class$="{{getIcon(item.icon)}}" on-click="showMe" ></span>
+										<span>{{item.description}}</span>
+									</template>
+				  				</li>		
+				  			</template>
+				  			</ul>
+				  			<ul data-name="dtwo">	
+				  			<template is="dom-repeat" items="{{ajaxResponse.list}}" filter="getTwoToday">
+				  				<li>		 						
+									<span class="title">{{getDay(item.dt)}}</span>
+									<span class="small">{{getCelcious(item.main.temp_min)}}</span>	
+									<span class="small r">{{getCelcious(item.main.temp_max)}}</span>
+									<template is="dom-repeat" items="{{item.weather}}">
+										<span class$="{{getIcon(item.icon)}}" on-click="showMe"></span>
+										<span>{{item.description}}</span>
+									</template>
+				  				</li>		
+				  			</template>
+				  			</ul>
+				  			<ul data-name="dthree">	
+				  			<template is="dom-repeat" items="{{ajaxResponse.list}}" filter="getThreeToday">
+				  				<li>		 						
+									<span class="title">{{getDay(item.dt)}}</span>
+									<span class="small">{{getCelcious(item.main.temp_min)}}</span>	
+									<span class="small r">{{getCelcious(item.main.temp_max)}}</span>
+									<template is="dom-repeat" items="{{item.weather}}">
+										<span class$="{{getIcon(item.icon)}}" on-click="showMe" ></span>
+										<span>{{item.description}}</span>
+									</template>
+				  				</li>		
+				  			</template>
+				  			</ul>
+				  			<ul data-name="dfour">
+				  			<template is="dom-repeat" items="{{ajaxResponse.list}}" filter="getFourToday">
+				  				<li>		 						
+									<span class="title">{{getDay(item.dt)}}</span>
+									<span class="small">{{getCelcious(item.main.temp_min)}}</span>	
+									<span class="small r">{{getCelcious(item.main.temp_max)}}</span>
+									<template is="dom-repeat" items="{{item.weather}}">
+										<span class$="{{getIcon(item.icon)}}" on-click="showMe"></span>
+										<span>{{item.description}}</span>
+									</template>
+				  				</li>	
+				  			</template>
+				  			</ul>
+			  		</div>
+		  		</div>	
+			  	<div class="displayPanel">
+				  	<template is="dom-if" if="{{flag}}">
+				  		<template is="dom-repeat" items="{{data}}">	
+				  			<li>
+				  				<div class="dis_par">		 						
+									<span class="title">{{getTime(item.dt)}}</span>
+									<span class="deep"><label>Min Temp</label><span>{{getCelcious(item.main.temp_min)}}</span></span>	
+									<span class="deep"><label>Max Temp</label><span>{{getCelcious(item.main.temp_max)}}</span></span>
+									<span class="deep"><label>Humidity</label><span>{{item.main.humidity}}</span></span>
+									<span class="deep"><label>Pressure</label><span>{{item.main.pressure}}</span></span>
+								</div>
+								<div class="dis_sub">
+								<template is="dom-repeat" items="{{item.weather}}">
+									<span class$="{{getIcon(item.icon)}}"></span>
+									<span class="des">{{item.description}}</span>
+								</template>
+								</div>
+			  				</li>
+				  		</template>
+					</template>
+				</div>	
+			</div>
+			<div class="google-map">
+				<google-map latitude$="{{ajaxResponse.city.coord.lat}}" longitude$="{{ajaxResponse.city.coord.lon}}" fit-to-markers>
+				  <template is="dom-repeat" items="[[ajaxResponse.list.0.weather]]">
+					  <google-map-marker latitude$="{{ajaxResponse.city.coord.lat}}" longitude$="{{ajaxResponse.city.coord.lon}}" draggable="true" title$="{{ajaxResponse.city.name}}" icon$="{{imgUrl(item.icon)}}">
+					  	<span>
+					  		MaxTemp - <span>{{getCelcious(ajaxResponse.list.0.main.temp_max)}}</span>,
+					  		MinTemp - <span>{{getCelcious(ajaxResponse.list.0.main.temp_min)}}</span>
+					  	</span>
+					  </google-map-marker>
+				  </template>
+				</google-map>
+			</div>
+	  	</paper-scroll-header-panel>
+	</template>
+	<script>
+		Polymer({
+			is:"weather-app",
+			properties:{
+				param:{
+					value:{q:"hyderabad",mode:"json"}
+				},
+				s1ub_valid:{
+					value:false
+				},
+				today:{
+					value:[]
+				},
+				done:{
+					value:[]
+				},
+				dtwo:{
+					value:[]
+				},
+				dthree:{
+					value:[]
+				},
+				dfour:{
+					value:[]
+				},
+				flag:{
+					value:false
+				},
+				data:{
+					value:this.done
+				}
+			},
+			showMe:function(e){
+				this.flag = !this.flag;
+				var item=document.querySelector(".selected");
+				if(item){item.classList.remove("selected");}				
+				var x=e.target.parentNode.parentNode;
+				x.classList.add("selected");
+				this.flag=true;
+				var name= x.getAttribute("data-name");
+				this.data=this[name];
+			},
+			ready:function(){
+			},
+			getToday:function(value){
+				var y=value.dt_txt,
+					x=new Date();
+					x=x.getDate();
+					if(x<9){x="0"+x;}
+					y=y.substring(8,10);
+					if(x==y){
+						this.today.push(value);
+						return value;
+					}
+			},
+			getOneToday:function(value){
+				var y=value.dt_txt,
+					x=new Date();
+					x=x.getDate()+1;
+					if(x<9){x="0"+x;}
+					y=y.substring(8,10);
+					if(y==x){
+						this.done.push(value);
+						return value;
+					}
+			},
+			getTwoToday:function(value){
+				var y=value.dt_txt,
+					x=new Date();
+					x=x.getDate()+2;
+					if(x<9){x="0"+x;}
+					y=y.substring(8,10);
+					if(y==x){
+						this.dtwo.push(value);
+						return value;
+					}
+			},
+			getThreeToday:function(value){
+				var y=value.dt_txt,
+					x=new Date();
+					x=x.getDate()+3;
+					if(x<9){x="0"+x;}
+					y=y.substring(8,10);
+					if(y==x){
+						this.dthree.push(value);
+						return value;
+					}
+			},
+			getFourToday:function(value){
+				var y=value.dt_txt,
+					x=new Date();
+					x=x.getDate()+4;
+					if(x<9){x="0"+x;}
+					y=y.substring(8,10);
+					if(y==x){
+						this.dfour.push(value);
+						return value;
+					}	
+			},
+			getIcon:function(item){
+				return "icon icon-"+item;
+			},
+			getTime:function(item){
+				var i={},
+					x=new Date(item*1000);
+					i.hour=x.getHours();
+					i.min=x.getMinutes();
+					x= i.hour+":"+i.min;
+					return x;	
+			},
+			getDate:function(item){
+				var i={},
+					x=new Date(item*1000);
+					i.date=x.getDate();
+					i.mon=x.getMonth();
+					i.year=x.getYear();
+					month=["Jan","Feb","Mar","April","May","June","July","Aug","Sept","oct","Nov","Dec"]
+					x= i.date+","+month[i.mon]+", 2015";
+					return x;	
+			},
+			getDay:function(item){
+				var i={},
+					x=new Date(item*1000);
+					i.d=x.getDay();
+					day=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+					x= day[i.d];
+					return x;	
+			},
+			knightnDay:function(item){
+				var x=new Date(item*1000),
+					r=x.getHours(),
+					ampm = (7< r <19)?'pm now':'am now';
+					return ampm;
+			},
+			getCelcious:function(item){
+					return (item-273).toFixed(2);
+			},
+			newAjax:function(){
+				val=document.querySelector("paper-input").value;
+				if(val){
+					this.param.q=val;
+					this.sub_valid=false;
+					var item=document.querySelector(".selected");
+					if(item){item.classList.remove("selected");}	
+					this.flag=false;
+					this.data="";
+					this.today=[];
+					this.done=[];
+					this.dtwo=[];
+					this.dthree=[];
+					this.dfour=[];
+					this.$.weather.generateRequest();
+				}
+				else{
+					this.sub_valid=true;
+				}
+			},
+			handleResponse:function(){
+			
+			}
+		});
+	</script>	
+</dom-module>
