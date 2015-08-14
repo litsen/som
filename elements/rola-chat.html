@@ -1,0 +1,99 @@
+<link rel="import" href="import.html">
+<link rel="import" href="chat-list.html">
+<dom-module id="rola-chat">
+	<style is="rola-chat">
+		:host{height: 100%;}
+		#item-icon{width: 23%;height: 52px;margin-right: 6%;border-radius: 100%;}
+    	paper-item{margin:2% 0;}
+    	.red{background-color: red;}
+    	.blue{background-color: blue;}
+    	.yellow{background-color: yellow;}
+		paper-drawer-panel {
+		  --paper-drawer-panel-main-container: {
+		    background-color: pink;
+		  };
+		}
+	</style>
+	<template>
+		<core-pubnub publish_key="pub-c-94d1a035-2627-4841-b08c-00780f692a03" subscribe_key="sub-c-33eb06bc-40d3-11e5-81f8-02ee2ddab7fe" uuid="som">
+		  	<core-pubnub-publish id="pub" channel="Channel-7fofnbj5o" message$="{{message}}"></core-pubnub-publish>
+			<core-pubnub-subscribe id="sub" channel="Channel-7fofnbj5o" message$="{{somma}}" on-callback="subscribeCallback"> 
+			</core-pubnub-subscribe>
+		</core-pubnub>
+		
+		<span>{{somma}}</span>
+		
+		<div flex class="chat-list">
+			<template is="dom-repeat" items="{{message}}">
+				<chat-list color$="{{item.color}}" avatar$="{{item.avatar}}" username$="{{item.uuid}}" text$="{{item.text}}"></chat-list>
+			</template>
+		</div>
+
+		<paper-drawer-panel>
+		  	<div drawer>
+		  		<paper-toolbar class="tall">
+					<div class="title bottom indent">Rola Chat</div>
+				</paper-toolbar>
+			</div>
+		  	<div main>
+		  		<paper-toolbar> 
+		  		 	<div class="layout horizontal flex">
+				    	<span class="flex">Rola Chat</span>
+				    	<span>2</span> 
+				    	<iron-icon icon="account-circle"></paper-icon>
+			    	</div>
+				</paper-toolbar>
+
+		  	 	<div class="bottom send-message layout horizontal flex">
+						<template is="dom-repeat" items="{{messages}}">
+						    <chat-list color="{{item.color}}" 
+						                 avatar="{{item.avatarUrl}}" 
+						                 username="{{item.uuid}}" 
+						                 text="{{item.text}}">
+						    </chat-list>
+						</template>
+	  	 			<paper-input label="Type message..." class="flex" id="input_paper" value="{{input_paper_value::input}}"></paper-input>
+				  	<paper-fab icon="send" on-click="sendMessage"></paper-fab>
+				</div> 
+
+		  	</div>
+		</paper-drawer-panel>
+	</template>	
+</dom-module>
+<script type="text/javascript">
+Polymer({
+	is:"Rola-chat",
+	properties:{
+		message:{
+			type:Object
+		},
+		somma:{
+			type:Array
+		}
+	},
+	ready:function(){
+		this.datas=[{icon: 'red', title: 'Red'},{icon: 'blue', title: 'Blue'},{icon: 'yellow', title: 'Yellow'}];
+		this.uuid = "som";
+		this.color = "red";
+		this.avatarUrl = 'images/' + "som" + '.jpg';
+	},
+	sendMessage:function(){
+		var input_data = document.querySelector('#input_paper');
+		if(!input_data.value) return;
+		this.message = [{
+		    uuid: this.uuid, 
+		    avatar: this.avatarUrl,
+		    color: this.color, 
+		    text: input_data.value  
+		}];
+		this.$.pub.publish();
+	},
+	subscribeCallback:function(data,susu){
+		console.log("this is the suscribe");
+		console.log(susu);
+		console.log(data);
+	}
+});
+</script>
+
+
