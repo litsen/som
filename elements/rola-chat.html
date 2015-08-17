@@ -7,7 +7,7 @@
     	paper-item{margin:2% 0;}
     	paper-drawer-panel {
 		  --paper-drawer-panel-main-container: {
-		    background-color: pink;
+		   		background-color: white;
 		  };
 		}
 		#chat_list p {
@@ -20,7 +20,6 @@
 		  width: 13%;
 		}
 		#chat_list img {
-		  border: 1px solid black;
 		  border-radius: 100%;
 		  padding: 8px;
 		  width: 30%;
@@ -29,7 +28,7 @@
 		  display: block;
 		}
 		#chat_list .chat_text {
-		  border: 1px solid black;
+		  border: 1px solid black;	
 		  border-radius: 10px;
 		  display: inline-block;
 		  height: auto;
@@ -38,6 +37,31 @@
 		  vertical-align: top;
 		}
 		.its_n_me{text-align: right;padding-right: 2%;}
+		#body_chat {
+		  height: 77%;
+		  overflow-y: scroll;
+		}
+		#left_panel .chat_img .username {
+		  display: inline-block;
+		  padding-left: 7%;
+		  padding-top: 13%;
+		  vertical-align: top;
+		}
+		#left_panel .chat_img img {
+		  display: inline-block;
+		}
+		#left_panel .chat_img {
+		  width: 50% !important;
+		}
+		.tall{text-align: center;}
+		.tall img {
+		  margin: 150% auto 0;
+		  width: 35%;
+		}
+		.tall .title{margin: 0;}
+		#left_panel.its_n_me {
+		  text-align: left;
+		}
 	</style>
 	<template>
 		<core-pubnub publish_key="pub-c-94d1a035-2627-4841-b08c-00780f692a03" subscribe_key="sub-c-33eb06bc-40d3-11e5-81f8-02ee2ddab7fe" uuid="som">
@@ -48,32 +72,42 @@
 		<paper-drawer-panel>
 		  	<div drawer>
 		  		<paper-toolbar class="tall">
-					<div class="title bottom indent">Rola Chat</div>
+		  			<img src$="{{avatarUrl}}"/>
+					<div class="title bottom indent">{{uuid}}</div>
 				</paper-toolbar>
+				<template is="dom-repeat" items="{{user_Name}}">
+					<div class$="{{add_class(item.uuid,item.color)}}" id="left_panel">
+						<div id="chat_list">
+							<div class="chat_img">
+								<img src$="{{item.avatar}}"/>
+								<span class="username">{{item.uuid}}</span>
+							</div>
+						</div>
+					</div>
+				</template>		
 			</div>
 		  	<div main>
 		  		<paper-toolbar> 
 		  		 	<div class="layout horizontal flex">
 				    	<span class="flex">Rola Chat</span>
-				    	<span>2</span> 
+				    	<span>{{user_Name.length}}</span> 
 				    	<iron-icon icon="account-circle"></paper-icon>
 			    	</div>
 				</paper-toolbar>
-
-				<template is="dom-repeat" items="{{showData}}">
-					<div class$="{{add_class(item.uuid,item.color)}}">
-						<div id="chat_list">
-								<div class="chat_img">
-									<img src$="{{item.avatar}}" title$="{{item.username}}"/>
-									<span class="username">{{item.uuid}}</span>
+				<div id="body_chat">
+					<template is="dom-repeat" items="{{showData}}">
+							<div class$="{{add_class(item.uuid,item.color)}}">
+								<div id="chat_list">
+										<div class="chat_img">
+											<img src$="{{item.avatar}}" title$="{{item.username}}"/>
+										</div>
+										<div class="chat_text">
+											<span class="text">{{item.text}}</span>
+										</div>
 								</div>
-								<div class="chat_text">
-									<span class="text">{{item.text}}</span>
-								</div>
-						</div>
-					</div>
-				</template>
-
+							</div>
+					</template>
+				</div>
 		  	 	<div class="bottom send-message layout horizontal flex">
 	  	 			<paper-input label="Type message..." class="flex" id="input_paper" value="{{input_paper_value::input}}"></paper-input>
 				  	<paper-fab icon="send" on-click="sendMessage"></paper-fab>
@@ -90,17 +124,26 @@ Polymer({
 			type:Array,
 			value:[]
 		},
+		user_Array:{
+			type:Array,
+			value:[]
+		},
 		showData:{
 			type:Array,
 			value:[],
 			notify:true,
 			reflectToAttribute: true
+		},
+		user_Name:{
+			type:Array,
+			value:[],
+			notify:true
 		}
 	},
 	ready:function(){
-		this.uuid = "som";
+		this.uuid = "Som";
 		this.color = "red";
-		this.avatarUrl = "../gravatar/1439672458_ktip.png";
+		this.avatarUrl = "../gravatar/1439672475_user_male.png";
 		this.message=[];
 	},
 	add_class:function(x,y){
@@ -122,6 +165,10 @@ Polymer({
 		input_data.value="";
 	},
 	subscribeCallback:function(data,susu){
+		if((this.user_Array.indexOf(susu[0].uuid)) < 0){
+			this.push("user_Array",susu[0].uuid);
+			this.push("user_Name",susu[0]);
+		}
 		if(susu.length>=1)
 			this.push("showData",susu[0]);
 	}
