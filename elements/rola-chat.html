@@ -5,30 +5,45 @@
 		:host{height: 100%;}
 		#item-icon{width: 23%;height: 52px;margin-right: 6%;border-radius: 100%;}
     	paper-item{margin:2% 0;}
-    	.red{background-color: red;}
-    	.blue{background-color: blue;}
-    	.yellow{background-color: yellow;}
-		paper-drawer-panel {
+    	paper-drawer-panel {
 		  --paper-drawer-panel-main-container: {
 		    background-color: pink;
 		  };
+		}
+		#chat_list p {
+		  margin: 0;
+		}
+		#chat_list .chat_img {
+		  display: inline-block;
+		  height: auto;
+		  text-align: center;
+		  width: 13%;
+		}
+		#chat_list img {
+		  border: 1px solid black;
+		  border-radius: 100%;
+		  padding: 8px;
+		  width: 30%;
+		}
+		.chat_img .username {
+		  display: block;
+		}
+		#chat_list .chat_text {
+		  border: 1px solid black;
+		  border-radius: 10px;
+		  display: inline-block;
+		  height: auto;
+		  margin-top: 1%;
+		  padding: 1% 2%;
+		  vertical-align: top;
 		}
 	</style>
 	<template>
 		<core-pubnub publish_key="pub-c-94d1a035-2627-4841-b08c-00780f692a03" subscribe_key="sub-c-33eb06bc-40d3-11e5-81f8-02ee2ddab7fe" uuid="som">
 		  	<core-pubnub-publish id="pub" channel="Channel-7fofnbj5o" message$="{{message}}"></core-pubnub-publish>
-			<core-pubnub-subscribe id="sub" channel="Channel-7fofnbj5o" message$="{{somma}}" on-callback="subscribeCallback"> 
+			<core-pubnub-subscribe id="sub" channel="Channel-7fofnbj5o" message$="{{message}}" on-callback="subscribeCallback"> 
 			</core-pubnub-subscribe>
 		</core-pubnub>
-		
-		<span>{{somma}}</span>
-		
-		<div flex class="chat-list">
-			<template is="dom-repeat" items="{{message}}">
-				<chat-list color$="{{item.color}}" avatar$="{{item.avatar}}" username$="{{item.uuid}}" text$="{{item.text}}"></chat-list>
-			</template>
-		</div>
-
 		<paper-drawer-panel>
 		  	<div drawer>
 		  		<paper-toolbar class="tall">
@@ -44,18 +59,24 @@
 			    	</div>
 				</paper-toolbar>
 
+				<template is="dom-repeat" items="{{showData}}">
+					<div class$="{{item.color}}">
+						<div id="chat_list">
+								<div class="chat_img">
+									<img src$="{{item.avatar}}" title$="{{item.username}}"/>
+									<span class="username">{{item.uuid}}</span>
+								</div>
+								<div class="chat_text">
+									<span class="text">{{item.text}}</span>
+								</div>
+						</div>
+					</div>
+				</template>
+
 		  	 	<div class="bottom send-message layout horizontal flex">
-						<template is="dom-repeat" items="{{messages}}">
-						    <chat-list color="{{item.color}}" 
-						                 avatar="{{item.avatarUrl}}" 
-						                 username="{{item.uuid}}" 
-						                 text="{{item.text}}">
-						    </chat-list>
-						</template>
 	  	 			<paper-input label="Type message..." class="flex" id="input_paper" value="{{input_paper_value::input}}"></paper-input>
 				  	<paper-fab icon="send" on-click="sendMessage"></paper-fab>
-				</div> 
-
+				</div>
 		  	</div>
 		</paper-drawer-panel>
 	</template>	
@@ -65,17 +86,21 @@ Polymer({
 	is:"Rola-chat",
 	properties:{
 		message:{
-			type:Object
+			type:Array,
+			value:[]
 		},
-		somma:{
-			type:Array
+		showData:{
+			type:Array,
+			value:[],
+			notify:true,
+			reflectToAttribute: true
 		}
 	},
 	ready:function(){
-		this.datas=[{icon: 'red', title: 'Red'},{icon: 'blue', title: 'Blue'},{icon: 'yellow', title: 'Yellow'}];
 		this.uuid = "som";
 		this.color = "red";
-		this.avatarUrl = 'images/' + "som" + '.jpg';
+		this.avatarUrl = "../gravatar/1439672458_ktip.png";
+		this.message=[];
 	},
 	sendMessage:function(){
 		var input_data = document.querySelector('#input_paper');
@@ -87,11 +112,13 @@ Polymer({
 		    text: input_data.value  
 		}];
 		this.$.pub.publish();
+		input_data.value="";
 	},
 	subscribeCallback:function(data,susu){
-		console.log("this is the suscribe");
-		console.log(susu);
-		console.log(data);
+		if(susu.length>=1)
+			this.push("showData",susu[0]);
+		//console.log(this.message);
+		console.log(this.showData);
 	}
 });
 </script>

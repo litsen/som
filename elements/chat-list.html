@@ -1,10 +1,15 @@
 <link rel="import" href="import.html">
 <dom-module id="chat-list">
 	<template>
-		<span class$="{{color}}"></span>
-		<p>this is the end</p>
-		<span class="username">{{username}}</span>
-		<span class="text">{{text}}</span>
+		<div class$="{{color}}">
+			<p>
+				<span>{{avatar}}</span>
+				<img src$="{{avatar}}" title="som"/>
+				<span class="username">{{username}}</span>
+				<span>-</span>
+				<span class="text">{{text}}</span>
+			</p>
+		</div>
 	</template>	
 </dom-module>
 <script type="text/javascript">
@@ -23,6 +28,10 @@
 			avatar:{
 				type:String
 			}
+		},
+		imageSet:function(){
+			console.log("i m here");
+			return this.avatar;
 		},
 		ready:function(){
 			console.log("this is the chat list");	
