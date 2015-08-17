@@ -37,6 +37,7 @@
 		  padding: 1% 2%;
 		  vertical-align: top;
 		}
+		.its_n_me{text-align: right;padding-right: 2%;}
 	</style>
 	<template>
 		<core-pubnub publish_key="pub-c-94d1a035-2627-4841-b08c-00780f692a03" subscribe_key="sub-c-33eb06bc-40d3-11e5-81f8-02ee2ddab7fe" uuid="som">
@@ -60,7 +61,7 @@
 				</paper-toolbar>
 
 				<template is="dom-repeat" items="{{showData}}">
-					<div class$="{{item.color}}">
+					<div class$="{{add_class(item.uuid,item.color)}}">
 						<div id="chat_list">
 								<div class="chat_img">
 									<img src$="{{item.avatar}}" title$="{{item.username}}"/>
@@ -102,6 +103,12 @@ Polymer({
 		this.avatarUrl = "../gravatar/1439672458_ktip.png";
 		this.message=[];
 	},
+	add_class:function(x,y){
+		if(this.uuid == x)
+			return y+" its_me";
+		else
+			return y+" its_n_me";
+	},
 	sendMessage:function(){
 		var input_data = document.querySelector('#input_paper');
 		if(!input_data.value) return;
@@ -117,8 +124,6 @@ Polymer({
 	subscribeCallback:function(data,susu){
 		if(susu.length>=1)
 			this.push("showData",susu[0]);
-		//console.log(this.message);
-		console.log(this.showData);
 	}
 });
 </script>
